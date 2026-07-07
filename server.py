@@ -34,7 +34,9 @@ def main():
                     command, arguments = parse_message(message)
                     response = handle_command(command, arguments)
 
-                    client_socket.sendall(response.encode(ENCODING))
+                    response_text = (f"{response["status"]} {response["message"]}")
+
+                    client_socket.sendall(response_text.encode(ENCODING))
 
             finally: 
                 client_socket.close()

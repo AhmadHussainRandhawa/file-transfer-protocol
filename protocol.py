@@ -30,21 +30,35 @@ def parse_message(message: str) -> tuple[str, list[str]]:
     return command, arguments
 
 
+def ok(message: str) -> dict:
+    return {
+        "status": 'OK',
+        "message": message,
+    }
+
+
+def error(message: str) -> dict:
+    return {
+        "status": 'ERROR',
+        "message": message,
+    }
+
+
 def handle_ping(arguments: list[str]) -> str:
-    return "OK PONG"
+    return ok("PONG")
 
 
 def handle_info(arguments: list[str]) -> str:
-    return "OK miniFTP Server v0.2"
+    return ok("miniFTP server v0.2")
 
 
 def handle_help(arguments: list[str]) -> str: 
     commands = ", ".join(sorted(SUPPORTED_COMMANDS))
-    return f"OK Supported commands {commands}"
+    return ok(f"Supported commands {commands}")
 
 
 def handle_quit(arguments: list[str]) -> str:
-    return "OK Goodbye"
+    return ok("Goodbye")
 
 
 COMMAND_HANDLERS = {
@@ -59,7 +73,7 @@ def handle_command(command: str, arguments: list[str]) -> str:
     handler = COMMAND_HANDLERS.get(command)
 
     if handler is None:
-        return "ERROR unknown command"
+        return error("UNKNOWN COMMAND")
     
     return handler(arguments)
 
