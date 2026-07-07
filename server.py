@@ -1,7 +1,7 @@
 import socket
 
 from config import HOST, PORT, ENCODING, BUFFER_SIZE
-from protocol import parse_message, handle_command
+from protocol import process_message
 
 
 def main():
@@ -31,8 +31,7 @@ def main():
                     message = data.decode(ENCODING)
                     print(f"Received: {message}")
 
-                    command, arguments = parse_message(message)
-                    response = handle_command(command, arguments)
+                    response = process_message(message)
 
                     response_text = (f"{response["status"]} {response["message"]}")
 
