@@ -21,9 +21,12 @@ def main():
             print(f"Client connected: {client_address}")
 
             try: 
-                data = client_socket.recv(BUFFER_SIZE)
-                
-                if data:
+                while True:
+                    data = client_socket.recv(BUFFER_SIZE)
+                    
+                    if not data:
+                        break 
+
                     message = data.decode(ENCODING)
                     print(f"Received: {message}")
 

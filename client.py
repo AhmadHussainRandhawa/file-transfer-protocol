@@ -9,11 +9,16 @@ def main():
         client_socket.connect((HOST, PORT))
         print(f"Connected to {HOST}:{PORT}")
 
-        message = "Hello Server Jani!"
-        client_socket.sendall(message.encode(ENCODING))
+        while True:
+            message = input("> ")
 
-        response = client_socket.recv(BUFFER_SIZE)
-        print(f"The Server respond with {response.decode(ENCODING)}")
+            if message.lower() == 'quit':
+                break
+
+            client_socket.sendall(message.encode(ENCODING))
+
+            response = client_socket.recv(BUFFER_SIZE)
+            print(f"The Server respond with {response.decode(ENCODING)}")
 
     finally:
         client_socket.close()
