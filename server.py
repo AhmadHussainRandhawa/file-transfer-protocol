@@ -1,6 +1,6 @@
 import socket
 
-from config import HOST, PORT
+from config import HOST, PORT, ENCODING, BUFFER_SIZE
 
 
 def main():
@@ -20,9 +20,19 @@ def main():
 
             print(f"Client connected: {client_address}")
 
-            client_socket.close()
+            try: 
+                data = client_socket.recv(BUFFER_SIZE)
+                
+                if data:
+                    message = data.decode(ENCODING)
+                    print(f"Received: {message}")
 
-            print("Client disconnected.\n")
+                    response = "ACK"
+                    client_socket.sendall(response.encode(ENCODING))
+
+            finally: 
+                client_socket.close()
+                print("Client disconnected.\n")
 
     except KeyboardInterrupt:
         print("\nShutting down server...")

@@ -1,6 +1,5 @@
 import socket
-
-from config import HOST, PORT
+from config import HOST, PORT, BUFFER_SIZE, ENCODING
 
 
 def main():
@@ -9,6 +8,12 @@ def main():
     try:
         client_socket.connect((HOST, PORT))
         print(f"Connected to {HOST}:{PORT}")
+
+        message = "Hello Server Jani!"
+        client_socket.sendall(message.encode(ENCODING))
+
+        response = client_socket.recv(BUFFER_SIZE)
+        print(f"The Server respond with {response.decode(ENCODING)}")
 
     finally:
         client_socket.close()
