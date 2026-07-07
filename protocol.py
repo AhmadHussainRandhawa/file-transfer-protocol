@@ -58,7 +58,7 @@ COMMAND_HANDLERS = {
 def handle_command(command: str, arguments: list[str]) -> str:
     handler = COMMAND_HANDLERS.get(command)
 
-    if not handler:
+    if handler is None:
         return "ERROR unknown command"
     
     return handler(arguments)

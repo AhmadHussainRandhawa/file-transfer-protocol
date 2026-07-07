@@ -12,13 +12,13 @@ def main():
         while True:
             message = input("> ")
 
-            if message.lower() == 'quit':
+            if message.lower() == 'exit':
                 break
 
             client_socket.sendall(message.encode(ENCODING))
 
             response = client_socket.recv(BUFFER_SIZE)
-            print(f"The Server respond with {response.decode(ENCODING)}")
+            print(f"Server: {response.decode(ENCODING)}")
 
     finally:
         client_socket.close()

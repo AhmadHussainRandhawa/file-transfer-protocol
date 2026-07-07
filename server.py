@@ -1,6 +1,7 @@
 import socket
 
 from config import HOST, PORT, ENCODING, BUFFER_SIZE
+from protocol import parse_message, handle_command
 
 
 def main():
@@ -30,7 +31,9 @@ def main():
                     message = data.decode(ENCODING)
                     print(f"Received: {message}")
 
-                    response = "ACK"
+                    command, arguments = parse_message(message)
+                    response = handle_command(command, arguments)
+
                     client_socket.sendall(response.encode(ENCODING))
 
             finally: 
