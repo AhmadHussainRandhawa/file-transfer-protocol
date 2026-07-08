@@ -3,7 +3,8 @@ SUPPORTED_COMMANDS = {
     "HELP",
     "INFO",
     "QUIT",
-    "LOGIN"
+    "LOGIN",
+    "LOGOUT",
 }
 
 
@@ -58,3 +59,16 @@ def handle_login(arguments: list[str], session) -> dict:
     session.authenticated = True
 
     return ok(f'Welcome {username}')
+
+
+def handle_logout(arguments, session):
+    if not session.authenticated:
+        return error("You are not logged in")
+    
+    username = session.username
+
+    session.username = None
+    session.authenticated = False
+
+    return ok(f"Goodbye {username}")
+

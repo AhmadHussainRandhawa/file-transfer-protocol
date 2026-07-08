@@ -5,6 +5,7 @@ from commands.handlers import (
     handle_ping,
     handle_quit,
     handle_login,
+    handle_logout,
 )
 
 
@@ -38,6 +39,7 @@ COMMAND_HANDLERS = {
     "HELP" : handle_help, 
     "QUIT" : handle_quit,
     "LOGIN": handle_login,
+    "LOGOUT": handle_logout,
 }
 
 
