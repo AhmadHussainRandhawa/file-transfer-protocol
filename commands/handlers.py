@@ -26,7 +26,18 @@ def handle_ping(arguments: list[str], session) -> dict:
 
 
 def handle_info(arguments: list[str], session) -> dict:
-    return ok("miniFTP server v0.2")
+    username = session.username or "Anonymous"
+
+    authenticated = "Yes" if session.authenticated else "No"
+    
+
+    message = (
+        "miniFTP server v0.2\n"
+        f"User: {username}\n"
+        f"Authenticated: {authenticated}\n"
+    )
+
+    return ok(message)
 
 
 def handle_help(arguments: list[str], session) -> dict: 
