@@ -3,6 +3,7 @@ SUPPORTED_COMMANDS = {
     "HELP",
     "INFO",
     "QUIT",
+    "LOGIN"
 }
 
 
@@ -20,18 +21,29 @@ def error(message: str) -> dict:
     }
 
 
-def handle_ping(arguments: list[str], session) -> str:
+def handle_ping(arguments: list[str], session) -> dict:
     return ok("PONG")
 
 
-def handle_info(arguments: list[str], session) -> str:
+def handle_info(arguments: list[str], session) -> dict:
     return ok("miniFTP server v0.2")
 
 
-def handle_help(arguments: list[str], session) -> str: 
+def handle_help(arguments: list[str], session) -> dict: 
     commands = ", ".join(sorted(SUPPORTED_COMMANDS))
     return ok(f"Supported commands {commands}")
 
 
-def handle_quit(arguments: list[str], session) -> str:
+def handle_quit(arguments: list[str], session) -> dict:
     return ok("Goodbye")
+
+
+def handle_login(arguments: list[str], session) -> dict:
+    if len(arguments) != 1:
+        return error("Usage: LOGIN <username>")
+    
+    username = arguments[0]
+    session.username = username
+    session.authenticated = True
+
+    return ok(f'Welcome {username}')
