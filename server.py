@@ -2,6 +2,7 @@ import socket
 
 from config import HOST, PORT, ENCODING, BUFFER_SIZE
 from protocol import process_message
+from session import Session
 
 
 def main():
@@ -19,6 +20,8 @@ def main():
 
             client_socket, client_address = server_socket.accept()
 
+            session = Session()
+
             print(f"Client connected: {client_address}")
 
             try: 
@@ -31,7 +34,7 @@ def main():
                     message = data.decode(ENCODING)
                     print(f"Received: {message}")
 
-                    response = process_message(message)
+                    response = process_message(message, session)
 
                     response_text = (f"{response["status"]} {response["message"]}")
 

@@ -20,18 +20,18 @@ def error(message: str) -> dict:
     }
 
 
-def handle_ping(arguments: list[str]) -> str:
+def handle_ping(arguments: list[str], session) -> str:
     return ok("PONG")
 
 
-def handle_info(arguments: list[str]) -> str:
+def handle_info(arguments: list[str], session) -> str:
     return ok("miniFTP server v0.2")
 
 
-def handle_help(arguments: list[str]) -> str: 
+def handle_help(arguments: list[str], session) -> str: 
     commands = ", ".join(sorted(SUPPORTED_COMMANDS))
     return ok(f"Supported commands {commands}")
 
 
-def handle_quit(arguments: list[str]) -> str:
+def handle_quit(arguments: list[str], session) -> str:
     return ok("Goodbye")

@@ -39,16 +39,16 @@ COMMAND_HANDLERS = {
 }
 
 
-def handle_command(command: str, arguments: list[str]) -> str:
+def handle_command(command: str, arguments: list[str], session) -> dict:
     handler = COMMAND_HANDLERS.get(command)
 
     if handler is None:
         return error("unknown command")
     
-    return handler(arguments)
+    return handler(arguments, session)
 
 
-def process_message(message: str) -> dict:
+def process_message(message: str, session) -> dict:
     """
     Process a raw client message and return
     a protocol response.
@@ -56,4 +56,4 @@ def process_message(message: str) -> dict:
 
     command, arguments = parse_message(message)
 
-    return handle_command(command, arguments)
+    return handle_command(command, arguments, session)
