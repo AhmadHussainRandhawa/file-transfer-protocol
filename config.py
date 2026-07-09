@@ -1,4 +1,13 @@
 HOST = "127.0.0.1"
+
 PORT = 2121
+
 BUFFER_SIZE = 4096
+
 ENCODING = "utf-8"
+
+USERS_FILE = "users.json"
+
+SERVER_NAME = "MiniFTP Server"
+
+SERVER_VERSION = "0.3"

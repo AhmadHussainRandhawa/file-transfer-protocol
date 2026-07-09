@@ -1,4 +1,5 @@
 from auth import authenticate
+from config import SERVER_NAME, SERVER_VERSION
 
 
 SUPPORTED_COMMANDS = {
@@ -36,7 +37,7 @@ def handle_info(arguments: list[str], session) -> dict:
     
 
     message = (
-        "miniFTP server v0.2\n"
+        f"{SERVER_NAME} v{SERVER_VERSION}\n"
         f"User: {username}\n"
         f"Authenticated: {authenticated}\n"
     )

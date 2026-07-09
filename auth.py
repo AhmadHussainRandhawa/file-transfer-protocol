@@ -1,7 +1,5 @@
 import json
-
-
-USERS_FILE = "users.json"
+from config import USERS_FILE
 
 
 def load_users() -> dict:
