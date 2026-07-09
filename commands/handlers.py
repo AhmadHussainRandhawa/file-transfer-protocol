@@ -29,7 +29,7 @@ def handle_ping(arguments: list[str], session) -> dict:
 def handle_info(arguments: list[str], session) -> dict:
     username = session.username or "Anonymous"
 
-    authenticated = "Yes" if session.authenticated else "No"
+    authenticated = "Yes" if session.is_authenticated() else "No"
     
 
     message = (
@@ -55,20 +55,18 @@ def handle_login(arguments: list[str], session) -> dict:
         return error("Usage: LOGIN <username>")
     
     username = arguments[0]
-    session.username = username
-    session.authenticated = True
+    session.login(username)
 
     return ok(f'Welcome {username}')
 
 
 def handle_logout(arguments, session):
-    if not session.authenticated:
+    if not session.is_authenticated():
         return error("You are not logged in")
     
     username = session.username
 
-    session.username = None
-    session.authenticated = False
+    session.logout()
 
     return ok(f"Goodbye {username}")
 
