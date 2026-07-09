@@ -9,6 +9,9 @@ from commands.handlers import (
 )
 
 
+AUTH_REQUIRED_COMMANDS = {}
+
+
 def parse_message(message: str) -> tuple[str, list[str]]:
     """
     Convert a raw client message into:
@@ -48,6 +51,9 @@ def handle_command(command: str, arguments: list[str], session) -> dict:
 
     if handler is None:
         return error("unknown command")
+    
+    if (command in AUTH_REQUIRED_COMMANDS and not session.is_authenticated()):
+        return error("Please login first.")
     
     return handler(arguments, session)
 
