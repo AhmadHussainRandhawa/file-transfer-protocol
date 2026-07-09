@@ -1,3 +1,6 @@
+from auth import authenticate
+
+
 SUPPORTED_COMMANDS = {
     "PING",
     "HELP",
@@ -51,13 +54,17 @@ def handle_quit(arguments: list[str], session) -> dict:
 
 
 def handle_login(arguments: list[str], session) -> dict:
-    if len(arguments) != 1:
-        return error("Usage: LOGIN <username>")
-    
-    username = arguments[0]
+    if len(arguments) != 2:
+        return error("Usage: LOGIN <username> <password>")
+
+    username, password = arguments
+
+    if not authenticate(username, password):
+        return error("Invalid username or password.")
+
     session.login(username)
 
-    return ok(f'Welcome {username}')
+    return ok(f"Welcome {username}")
 
 
 def handle_logout(arguments, session):
