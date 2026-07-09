@@ -1,3 +1,6 @@
+from pathlib import Path
+
+
 class Session:
     """
     Represents one connected client.
@@ -6,6 +9,7 @@ class Session:
     def __init__(self):
         self.authenticated = False
         self.username = None
+        self.current_directory = Path("/")
 
     def login(self, username: str) -> None:
         self.authenticated = True
