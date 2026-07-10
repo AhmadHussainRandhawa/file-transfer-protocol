@@ -6,10 +6,13 @@ from commands.handlers import (
     handle_quit,
     handle_login,
     handle_logout,
+    handle_pwd,
 )
 
 
-AUTH_REQUIRED_COMMANDS = {}
+AUTH_REQUIRED_COMMANDS = {
+    "PWD",
+}
 
 
 def parse_message(message: str) -> tuple[str, list[str]]:
@@ -43,6 +46,7 @@ COMMAND_HANDLERS = {
     "QUIT" : handle_quit,
     "LOGIN": handle_login,
     "LOGOUT": handle_logout,
+    "PWD": handle_pwd,
 }
 
 

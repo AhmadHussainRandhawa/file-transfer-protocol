@@ -9,6 +9,7 @@ SUPPORTED_COMMANDS = {
     "QUIT",
     "LOGIN",
     "LOGOUT",
+    "PWD",
 }
 
 
@@ -77,4 +78,11 @@ def handle_logout(arguments, session):
     session.logout()
 
     return ok(f"Goodbye {username}")
+
+
+def handle_pwd(argumnets, session):
+    if argumnets:
+        return error("usage <PWD>")
+
+    return ok(str(session.current_directory))
 
