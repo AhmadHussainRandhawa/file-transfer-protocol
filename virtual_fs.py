@@ -79,3 +79,25 @@ class VirtualFileSystem:
 
         return sorted(entries)
         
+
+    def file_exists(self, virtual_path: Path) -> bool:
+        """
+        Return True if the virtual file exists.
+        """
+        real_path = self.get_real_path(virtual_path)
+        return real_path.is_file()
+
+
+    def get_file_size(self, virtual_path: Path) -> int:
+        """
+        Return the size of a file in bytes.
+        """
+        real_path = self.get_real_path(virtual_path)
+        return real_path.stat().st_size
+    
+    
+    def get_file_path(self, virtual_path: Path) -> Path:
+        """
+        Return the real filesystem path for a file.
+        """
+        return self.get_real_path(virtual_path)
