@@ -1,5 +1,8 @@
 from auth import authenticate
 from config import SERVER_NAME, SERVER_VERSION
+from virtual_fs import VirtualFileSystem
+
+vfs = VirtualFileSystem()
 
 
 SUPPORTED_COMMANDS = {
@@ -8,8 +11,9 @@ SUPPORTED_COMMANDS = {
     "INFO",
     "QUIT",
     "LOGIN",
-    "LOGOUT",
     "PWD",
+    "LOGOUT",
+    "CD",
 }
 
 
@@ -85,4 +89,20 @@ def handle_pwd(argumnets, session):
         return error("usage <PWD>")
 
     return ok(str(session.current_directory))
+
+
+def handle_cd(arguments, session):
+    if len(arguments) != 1:
+        return error("Usage: CD <directory>")
+    
+    target = arguments[0]
+
+    virtual_path = vfs.resolve_virtual_path(session.current_directory, target)
+    
+    if not vfs.directory_exists(virtual_path):
+        return error("Directory does not exists.")
+
+    session.current_directory = virtual_path
+
+    return ok(f"Current directory: {virtual_path}")
 
