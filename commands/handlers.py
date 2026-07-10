@@ -1,6 +1,8 @@
 from auth import authenticate
 from config import SERVER_NAME, SERVER_VERSION
 from virtual_fs import VirtualFileSystem
+from exceptions import PathTraversalError, DirectoryNotFoundError
+
 
 vfs = VirtualFileSystem()
 
@@ -98,9 +100,15 @@ def handle_cd(arguments, session):
     
     target = arguments[0]
 
-    virtual_path = vfs.resolve_virtual_path(session.current_directory, target)
+    try: 
+        virtual_path = vfs.resolve_virtual_path(session.current_directory, target)
+
+        vfs.directory_exists(virtual_path)
+
+    except PathTraversalError:
+        return error("Access denied.")
     
-    if not vfs.directory_exists(virtual_path):
+    except DirectoryNotFoundError:
         return error("Directory does not exists.")
 
     session.current_directory = virtual_path

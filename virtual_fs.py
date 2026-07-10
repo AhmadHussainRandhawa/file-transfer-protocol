@@ -1,5 +1,7 @@
 from config import STORAGE_ROOT
 from pathlib import Path
+from exceptions import PathTraversalError, DirectoryNotFoundError
+
 
 class VirtualFileSystem:
     
@@ -18,7 +20,7 @@ class VirtualFileSystem:
         try:
             real_path.relative_to(self.root)
         except ValueError:
-            raise("Access outside storage is not allowed.")
+            raise PathTraversalError("Access outside storage is not allowed.")
         
         return real_path
 
@@ -58,7 +60,10 @@ class VirtualFileSystem:
         """
         real_path = self.get_real_path(virtual_path)
 
-        return real_path.is_dir()
+        if not real_path.is_dir():
+            raise DirectoryNotFoundError(f"Directory '{virtual_path}' does not exist.")
+
+        return True
 
 
     def list_directory(self, virtual_path) -> list[str]:
