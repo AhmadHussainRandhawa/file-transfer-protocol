@@ -3,7 +3,29 @@ import socket
 from config import HOST, PORT, ENCODING, BUFFER_SIZE
 from protocol import process_message
 from session import Session
+from virtual_fs import VirtualFileSystem
 
+
+vfs = VirtualFileSystem()
+
+
+def send_file(client_socket, session, vfs,):
+    """
+    Stream a file to the client.
+    """
+    virtual_path = session.pending_download
+
+    real_path = vfs.get_file_path(virtual_path)
+
+    with open(real_path, "rb") as file:
+
+        chunk = file.read(BUFFER_SIZE)
+        while chunk:
+            client_socket.sendall(chunk)
+            chunk = file.read(BUFFER_SIZE)
+
+    session.finish_download()
+    
 
 def main():
     server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -40,6 +62,9 @@ def main():
 
                     client_socket.sendall(response_text.encode(ENCODING))
 
+                    if session.pending_download:
+                        send_file(client_socket, session, vfs,)
+
             finally: 
                 client_socket.close()
                 print("Client disconnected.\n")
@@ -50,6 +75,7 @@ def main():
     finally:
         server_socket.close()
         print("Server socket closed.")
+
 
 if __name__ == "__main__":
     main()

@@ -137,11 +137,11 @@ def handle_get(arguments, session):
 
     if not vfs.file_exists(virtual_path):
         return error("File does not exists.")
-    print("if fails")
+
     session.start_download(virtual_path)
-    print("session starts")
+
     size = vfs.get_file_size(virtual_path)
-    print("rach to returnS")
+
     return ok(str(size))
 
     
