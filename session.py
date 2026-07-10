@@ -10,6 +10,7 @@ class Session:
         self.authenticated = False
         self.username = None
         self.current_directory = Path("/")
+        self.pending_download = None
 
     def login(self, username: str) -> None:
         self.authenticated = True
@@ -21,3 +22,9 @@ class Session:
 
     def is_authenticated(self) -> bool:
         return self.authenticated
+
+    def start_download(self, virtual_path):
+        self.pending_download = virtual_path
+
+    def finish_download(self):
+        self.pending_download = None

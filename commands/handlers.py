@@ -126,3 +126,23 @@ def handle_ls(arguments, session):
         return error("Directory is empty")
     
     return ok("\n".join(entries))
+
+
+def handle_get(arguments, session):
+    if len(arguments) != 1:
+        return error("Usage GET <filename>")
+
+    target = arguments[0]    
+    virtual_path = vfs.resolve_virtual_path(session.current_directory, target)
+
+    if not vfs.file_exists(virtual_path):
+        return error("File does not exists.")
+    print("if fails")
+    session.start_download(virtual_path)
+    print("session starts")
+    size = vfs.get_file_size(virtual_path)
+    print("rach to returnS")
+    return ok(str(size))
+
+    
+
