@@ -7,13 +7,15 @@ from commands.handlers import (
     handle_login,
     handle_logout,
     handle_pwd,
-    handle_cd
+    handle_cd,
+    handle_ls,
 )
 
 
 AUTH_REQUIRED_COMMANDS = {
     "PWD",
     "CD",
+    "LS",
 }
 
 
@@ -50,6 +52,7 @@ COMMAND_HANDLERS = {
     "LOGOUT": handle_logout,
     "PWD": handle_pwd,
     "CD": handle_cd,
+    "LS": handle_ls,
 }
 
 

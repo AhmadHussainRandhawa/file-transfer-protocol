@@ -60,4 +60,17 @@ class VirtualFileSystem:
 
         return real_path.is_dir()
 
-    
+
+    def list_directory(self, virtual_path) -> list[str]:
+        real_path = self.get_real_path(virtual_path)
+
+        entries = []
+
+        for entry in real_path.iterdir():
+            if entry.is_dir():
+                entries.append(f"/{entry.name}")
+            else:
+                entries.append(entry.name)
+
+        return sorted(entries)
+        

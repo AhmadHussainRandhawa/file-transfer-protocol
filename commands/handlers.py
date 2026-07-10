@@ -14,6 +14,7 @@ SUPPORTED_COMMANDS = {
     "PWD",
     "LOGOUT",
     "CD",
+    "LS",
 }
 
 
@@ -106,3 +107,14 @@ def handle_cd(arguments, session):
 
     return ok(f"Current directory: {virtual_path}")
 
+
+def handle_ls(arguments, session):
+    if arguments:
+        return error("Usage: LS")
+    
+    entries = vfs.list_directory(session.current_directory)
+    
+    if not entries:
+        return error("Directory is empty")
+    
+    return ok("\n".join(entries))
