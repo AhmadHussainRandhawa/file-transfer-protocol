@@ -32,47 +32,6 @@ def receive_file(client_socket, filename: str, file_size: int,):
     print(f"Download complete: {destination}")
 
 
-def send_file(
-    client_socket,
-    filepath: Path,
-):
-    """
-    Stream a file to the server.
-    """
-
-    file_size = filepath.stat().st_size
-
-    client_socket.sendall(
-        f"{file_size}".encode(ENCODING)
-    )
-
-    response = receive_response(
-        client_socket
-    )
-
-    print(f"Server: {response}")
-
-    if response != "OK SEND FILE":
-        return
-
-    sent = 0
-
-    with open(filepath, "rb") as file:
-        while chunk := file.read(BUFFER_SIZE):
-            client_socket.sendall(chunk)
-
-            sent += len(chunk)
-
-            print(
-                f"Sent "
-                f"{sent}/{file_size} bytes"
-            )
-
-    print(
-        f"Upload complete: {filepath.name}"
-    )
-    
-
 def receive_response(client_socket):
     """
     Read exactly one protocol response.
@@ -98,7 +57,7 @@ def send_file(client_socket, filepath: Path):
 
     file_size = filepath.stat().st_size
 
-    client_socket.sendall(f"{file_size}".encode(ENCODING))
+    client_socket.sendall(f"{file_size}\n".encode(ENCODING))
 
     response = receive_response(client_socket)
 
@@ -128,40 +87,61 @@ def main():
         print(f"Connected to {HOST}:{PORT}")
 
         while True:
-            message = input("> ")
+            message = input("> ").strip()
 
-            if message.lower() == 'exit':
+            if message.lower() == "exit":
                 break
 
-            client_socket.sendall(message.encode(ENCODING))
+            #
+            # Pre-validate PUT
+            #
+            filepath = None
 
+            if message.upper().startswith("PUT "):
+                parts = message.split(maxsplit=1)
+
+                if len(parts) != 2:
+                    print("Usage: PUT <filename>")
+                    continue
+
+                filepath = Path(parts[1])
+
+                if not filepath.is_file():
+                    print("Local file does not exist.")
+                    continue
+
+            #
+            # Send command
+            #
+            client_socket.sendall(f"{message}\n".encode(ENCODING))
+
+            #
+            # Receive response
+            #
             response = receive_response(client_socket)
 
             print(f"Server: {response}")
 
+            #
+            # GET
+            #
             if message.upper().startswith("GET "):
-                parts = response.split(" ", maxsplit=1,)
+                parts = response.split(" ",maxsplit=1,)
 
-                if parts[0] == "OK": 
+                if (len(parts) == 2 and parts[0] == "OK"):
                     file_size = int(parts[1])
-                    filename = (message.split()[1])
 
-                    receive_file(client_socket, filename, file_size,)
+                    filename = message.split(maxsplit=1)[1]
 
+                    receive_file(client_socket, filename, file_size)
 
-            if message.upper().startswith("PUT "):
+            #
+            # PUT
+            #
+            elif message.upper().startswith("PUT "):
                 if response == "OK READY":
-                    parts = message.split(maxsplit=1)
-
-                    filename = parts[1]
-
-                    filepath = Path(filename)
-
-                    if not filepath.is_file():
-                        print("Local file does not exist.")
-                        continue
-
                     send_file(client_socket, filepath)
+
     finally:
         client_socket.close()
         print("Connection closed.")

@@ -45,9 +45,9 @@ def handle_info(arguments: list[str], session) -> dict:
     
 
     message = (
-        f"{SERVER_NAME} v{SERVER_VERSION}\n"
-        f"User: {username}\n"
-        f"Authenticated: {authenticated}\n"
+        f"{SERVER_NAME} v{SERVER_VERSION}"
+        f"User: {username}"
+        f"Authenticated: {authenticated}"
     )
 
     return ok(message)
@@ -125,7 +125,7 @@ def handle_ls(arguments, session):
     if not entries:
         return error("Directory is empty")
     
-    return ok("\n".join(entries))
+    return ok((entries))
 
 
 def handle_get(arguments, session):

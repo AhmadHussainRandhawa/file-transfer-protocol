@@ -2,7 +2,7 @@ import socket
 
 from config import HOST, PORT, ENCODING, BUFFER_SIZE
 from protocol import process_message
-from session import Session, UPLOAD_WAITING_FOR_SIZE
+from session import Session, UPLOAD_WAITING_FOR_SIZE, UPLOAD_RECEIVING_FILE
 from virtual_fs import VirtualFileSystem
 
 
@@ -61,6 +61,20 @@ def receive_uploaded_file(client_socket, session, vfs):
     session.finish_upload()
 
 
+def receive_message(client_socket):
+    data = b""
+
+    while b"\n" not in data:
+        chunk = client_socket.recv(1)
+
+        if not chunk:
+            return None
+
+        data += chunk
+
+    return (data.decode(ENCODING).strip())
+
+
 def main():
     server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     server_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
@@ -78,18 +92,22 @@ def main():
 
             try: 
                 while True:
-                    data = client_socket.recv(BUFFER_SIZE)
-                    
-                    if not data:
-                        break 
 
-                    message = data.decode(ENCODING)
-                    print(f"Received: {message}")
+                    message = receive_message(client_socket)
+                    if message is None:
+                        break
 
                     if (session.upload_state == UPLOAD_WAITING_FOR_SIZE):
-                        file_size = int(message)
-                        session.begin_receiving_file(file_size)
-                        response = {"status": "OK", "message":"Send File"}
+                        try:
+                            file_size = int(message)
+                        except ValueError:
+                            session.finish_upload()
+
+                            response = {"status": "ERROR", "message": "Invalid file size",}
+
+                        else: 
+                            session.begin_receiving_file(file_size)
+                            response = {"status": "OK", "message":"SEND FILE"}
                     
                     else:
                         response = process_message(message, session)
@@ -101,7 +119,7 @@ def main():
                     if session.pending_download:
                         send_file(client_socket, session, vfs,)
 
-                    if session.upload_state == "RECEIVING_FILE":
+                    if session.upload_state == UPLOAD_RECEIVING_FILE:
                         receive_uploaded_file(client_socket, session, vfs)
 
             finally: 
