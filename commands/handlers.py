@@ -144,5 +144,17 @@ def handle_get(arguments, session):
 
     return ok(str(size))
 
+
+def handle_put(arguments, session):
+    if len(arguments) != 1:
+        return error('Usage PUT <filename>')
+    
+    target = arguments[0]
+
+    virtual_path = vfs.resolve_virtual_path(session.current_directory, target)
+
+    session.start_upload(virtual_path)
+
+    return ok("READY")
     
 

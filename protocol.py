@@ -10,6 +10,7 @@ from commands.handlers import (
     handle_cd,
     handle_ls,
     handle_get,
+    handle_put,
 )
 
 
@@ -18,6 +19,7 @@ AUTH_REQUIRED_COMMANDS = {
     "CD",
     "LS",
     "GET",
+    "PUT",
 }
 
 
@@ -56,6 +58,7 @@ COMMAND_HANDLERS = {
     "CD": handle_cd,
     "LS": handle_ls,
     "GET": handle_get,
+    "PUT": handle_put,
 }
 
 

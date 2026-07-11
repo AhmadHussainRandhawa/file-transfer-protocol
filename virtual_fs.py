@@ -101,3 +101,7 @@ class VirtualFileSystem:
         Return the real filesystem path for a file.
         """
         return self.get_real_path(virtual_path)
+
+    
+    def get_upload_path(self, virtual_path):
+        return self.get_file_path(virtual_path)
