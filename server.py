@@ -2,7 +2,7 @@ import socket
 
 from config import HOST, PORT, ENCODING, BUFFER_SIZE
 from protocol import process_message
-from session import Session
+from session import Session, UPLOAD_WAITING_FOR_SIZE
 from virtual_fs import VirtualFileSystem
 
 
@@ -38,13 +38,9 @@ def main():
 
     try:
         while True:
-            print("Waiting for a client...")
-
             client_socket, client_address = server_socket.accept()
 
             session = Session()
-
-            print(f"Client connected: {client_address}")
 
             try: 
                 while True:
@@ -56,7 +52,13 @@ def main():
                     message = data.decode(ENCODING)
                     print(f"Received: {message}")
 
-                    response = process_message(message, session)
+                    if (session.upload_state == UPLOAD_WAITING_FOR_SIZE):
+                        file_size = int(message)
+                        session.begin_receiving_file(file_size)
+                        response = {"status": "OK", "message":"Send File"}
+                    
+                    else:
+                        response = process_message(message, session)
 
                     response_text = (f"{response["status"]} {response["message"]}\n")
 
@@ -64,6 +66,9 @@ def main():
 
                     if session.pending_download:
                         send_file(client_socket, session, vfs,)
+
+                    if session.start_upload:
+                        pass
 
             finally: 
                 client_socket.close()

@@ -1,6 +1,10 @@
 from pathlib import Path
 
 
+UPLOAD_WAITING_FOR_SIZE = "WAITING_FOR_SIZE"
+UPLOAD_RECEIVING_FILE = "RECEIVING_FILE"
+
+
 class Session:
     """
     Represents one connected client.
@@ -13,6 +17,7 @@ class Session:
         self.pending_download = None
         self.pending_upload = None
         self.pending_upload_size = None
+        self.upload_state = None
 
     def login(self, username: str) -> None:
         self.authenticated = True
@@ -32,10 +37,16 @@ class Session:
         self.pending_download = None
     
     def start_upload(self, virtual_path):
-        self.start_download = virtual_path
-    
-    def finish_upload(self, virtual_path):
         self.pending_upload = virtual_path
+        self.upload_state = UPLOAD_WAITING_FOR_SIZE
+    
+    def finish_upload(self):
+        self.pending_upload = None
+        self.upload_state = None 
 
     def set_upload_size(self, size):
         self.pending_upload_size = size
+
+    def begin_receiving_file(self, file_size):
+        self.pending_upload_size = file_size
+        self.upload_state = UPLOAD_RECEIVING_FILE

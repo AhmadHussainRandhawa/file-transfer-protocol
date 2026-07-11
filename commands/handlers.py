@@ -154,7 +154,7 @@ def handle_put(arguments, session):
     virtual_path = vfs.resolve_virtual_path(session.current_directory, target)
 
     session.start_upload(virtual_path)
-
+    
     return ok("READY")
     
 
