@@ -11,3 +11,7 @@ SERVER_VERSION = "0.3"
 
 PROJECT_ROOT = Path(__file__).parent.resolve()
 STORAGE_ROOT = PROJECT_ROOT / "storage"
+
+CLIENT_DOWNLOADS = PROJECT_ROOT / Path("client_downloads")
+
+CLIENT_DOWNLOADS.mkdir(exist_ok=True)

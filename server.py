@@ -58,7 +58,7 @@ def main():
 
                     response = process_message(message, session)
 
-                    response_text = (f"{response["status"]} {response["message"]}")
+                    response_text = (f"{response["status"]} {response["message"]}\n")
 
                     client_socket.sendall(response_text.encode(ENCODING))
 
