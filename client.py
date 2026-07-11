@@ -1,5 +1,6 @@
 import socket
 from config import HOST, PORT, BUFFER_SIZE, ENCODING, CLIENT_DOWNLOADS
+from pathlib import Path
 
 
 def receive_file(client_socket, filename: str, file_size: int,):
@@ -31,6 +32,47 @@ def receive_file(client_socket, filename: str, file_size: int,):
     print(f"Download complete: {destination}")
 
 
+def send_file(
+    client_socket,
+    filepath: Path,
+):
+    """
+    Stream a file to the server.
+    """
+
+    file_size = filepath.stat().st_size
+
+    client_socket.sendall(
+        f"{file_size}".encode(ENCODING)
+    )
+
+    response = receive_response(
+        client_socket
+    )
+
+    print(f"Server: {response}")
+
+    if response != "OK SEND FILE":
+        return
+
+    sent = 0
+
+    with open(filepath, "rb") as file:
+        while chunk := file.read(BUFFER_SIZE):
+            client_socket.sendall(chunk)
+
+            sent += len(chunk)
+
+            print(
+                f"Sent "
+                f"{sent}/{file_size} bytes"
+            )
+
+    print(
+        f"Upload complete: {filepath.name}"
+    )
+    
+
 def receive_response(client_socket):
     """
     Read exactly one protocol response.
@@ -47,6 +89,35 @@ def receive_response(client_socket):
         data += chunk
 
     return data.decode(ENCODING).strip()
+
+
+def send_file(client_socket, filepath: Path):
+    """
+    Stream a file to the server.
+    """
+
+    file_size = filepath.stat().st_size
+
+    client_socket.sendall(f"{file_size}".encode(ENCODING))
+
+    response = receive_response(client_socket)
+
+    print(f"Server: {response}")
+
+    if response != "OK SEND FILE":
+        return
+
+    sent = 0
+
+    with open(filepath, "rb") as file:
+        while chunk := file.read(BUFFER_SIZE):
+            client_socket.sendall(chunk)
+
+            sent += len(chunk)
+
+            print(f"Sent {sent}/{file_size} bytes")
+
+    print(f"Upload complete: {filepath.name}")
 
 
 def main():
@@ -76,6 +147,21 @@ def main():
                     filename = (message.split()[1])
 
                     receive_file(client_socket, filename, file_size,)
+
+
+            if message.upper().startswith("PUT "):
+                if response == "OK READY":
+                    parts = message.split(maxsplit=1)
+
+                    filename = parts[1]
+
+                    filepath = Path(filename)
+
+                    if not filepath.is_file():
+                        print("Local file does not exist.")
+                        continue
+
+                    send_file(client_socket, filepath)
     finally:
         client_socket.close()
         print("Connection closed.")
