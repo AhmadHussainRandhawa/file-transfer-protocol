@@ -27,6 +27,40 @@ def send_file(client_socket, session, vfs,):
     session.finish_download()
     
 
+def receive_uploaded_file(client_socket, session, vfs):
+    """
+    Receive a file from the client
+    and save it to disk.
+    """
+
+    virtual_path = (session.pending_upload)
+    file_size = (session.pending_upload_size)
+    real_path = (vfs.get_upload_path(virtual_path))
+
+    received = 0
+
+    with open(real_path, "wb") as file:
+        while received < file_size:
+            remaining = (file_size - received)
+
+            chunk_size = min(BUFFER_SIZE, remaining,)
+
+            chunk = client_socket.recv(chunk_size)
+
+            if not chunk:
+                raise ConnectionError("Client disconnected during upload.")
+
+            file.write(chunk)
+
+            received += len(chunk)
+
+            print(f"Received {received}/{file_size} bytes")
+
+    print(f"Upload complete: {real_path}")
+
+    session.finish_upload()
+
+
 def main():
     server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     server_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
@@ -67,8 +101,8 @@ def main():
                     if session.pending_download:
                         send_file(client_socket, session, vfs,)
 
-                    if session.start_upload:
-                        pass
+                    if session.upload_state == "RECEIVING_FILE":
+                        receive_uploaded_file(client_socket, session, vfs)
 
             finally: 
                 client_socket.close()
